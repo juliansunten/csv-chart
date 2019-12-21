@@ -26,7 +26,7 @@ export class OutputGraphComponent implements OnDestroy {
   headSeparator = ','; // Output Konfiguration
   separator = ';'; // Output Konfiguration
   csvMode = true; // Output Mode Automatik oder CSV UPLOAD
-  chartLabels = ['FUE-Ausgaben', 'Drittmittel'];
+  chartLabels = ['FUE-Ausgaben', 'Drittmittel', 'Drittes Label'];
   speed = 4; // refreshing Speed in Seconds
   // CONFIGURATION END
 
@@ -48,11 +48,15 @@ export class OutputGraphComponent implements OnDestroy {
     },
     series: [
       {
-        name: 'Normal',
+        name: '',
         data: []
       },
       {
-        name: 'Abnormal',
+        name: '',
+        data: []
+      },
+      {
+        name: '',
         data: []
       },
     ]
@@ -95,31 +99,37 @@ export class OutputGraphComponent implements OnDestroy {
   }
 
   parseCsvFile(csvRecordsArray: any) {
+    const chart0 = [];
     const chart1 = [];
     const chart2 = [];
 
     for (let i = 1; i < csvRecordsArray.length; i++) {
       const currentRecord = (csvRecordsArray[i]).split(this.separator);
 
-      const abnormalRowData = [parseInt(currentRecord[0], 10), parseInt(currentRecord[1], 10)];
-      const normalRowData = [parseInt(currentRecord[0], 10), parseInt(currentRecord[2], 10)];
+      /*Parsing Data Rows to Chart Plotter*/
+      const rowData0 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[1], 10)];
+      const rowData1 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[2], 10)];
+      const rowData2 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[3], 10)];
 
-      chart1.push(abnormalRowData);
-      chart2.push(normalRowData);
+      chart0.push(rowData0);
+      chart1.push(rowData1);
+      chart2.push(rowData2);
     }
 
-    this.options.series[0]['data'] = chart1;
-    this.options.series[1]['data'] = chart2;
+    this.options.series[0]['data'] = chart0;
+    this.options.series[1]['data'] = chart1;
+    this.options.series[2]['data'] = chart2;
     if (this.chartLabels.length > 0) {
       this.options.series[0].name = this.chartLabels[0];
       this.options.series[1].name = this.chartLabels[1];
+      this.options.series[2].name = this.chartLabels[2];
     }
     return Highcharts.chart('container', this.options);
   }
 
   getCSV() {
     return this.http.post(environment.csvCloudFunction,
-        {apiLink: 'https://www.datenportal.bmbf.de/portal/Tabelle-1.6.2.csv'}
+        {apiLink: this.apiLink}
     );
   }
   // An Algorithm to Clean up The CSV
