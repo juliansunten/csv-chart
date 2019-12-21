@@ -54,11 +54,7 @@ export class OutputGraphComponent implements OnDestroy {
       {
         name: '',
         data: []
-      },
-      {
-        name: '',
-        data: []
-      },
+      }
     ]
   };
   constructor(private http: HttpClient) {
@@ -101,7 +97,6 @@ export class OutputGraphComponent implements OnDestroy {
   parseCsvFile(csvRecordsArray: any) {
     const chart0 = [];
     const chart1 = [];
-    const chart2 = [];
 
     for (let i = 1; i < csvRecordsArray.length; i++) {
       const currentRecord = (csvRecordsArray[i]).split(this.separator);
@@ -109,20 +104,16 @@ export class OutputGraphComponent implements OnDestroy {
       /*Parsing Data Rows to Chart Plotter*/
       const rowData0 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[1], 10)];
       const rowData1 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[2], 10)];
-      const rowData2 = [parseInt(currentRecord[0], 10), parseInt(currentRecord[3], 10)];
 
       chart0.push(rowData0);
       chart1.push(rowData1);
-      chart2.push(rowData2);
     }
 
     this.options.series[0]['data'] = chart0;
     this.options.series[1]['data'] = chart1;
-    this.options.series[2]['data'] = chart2;
     if (this.chartLabels.length > 0) {
       this.options.series[0].name = this.chartLabels[0];
       this.options.series[1].name = this.chartLabels[1];
-      this.options.series[2].name = this.chartLabels[2];
     }
     return Highcharts.chart('container', this.options);
   }
